@@ -124,16 +124,21 @@ const trafficPercentageClass = computed(() => {
 // 但在线天数、剩余天数等非金额信息仍然展示
 const showPrice = computed(() => appStore.isLoggedIn || !appStore.hidePriceWhenLoggedOut)
 
-// 左上角：在线天数（始终） + 价格（仅在允许显示金额时）
+// 左上角：在线天数（始终，只要有 created_at） + 价格（仅在 price > 0 且允许显示金额时）
 const onlineInfoTags = computed(() => {
   const node = props.node
-  if (node.price === 0)
-    return []
   const lang = appStore.lang
-  const days = getDaysOnline(node.created_at)
-  const tags = [lang === 'zh-CN' ? `在线 ${days} 天` : `${days} days online`]
-  if (showPrice.value)
+  const tags: string[] = []
+
+  if (node.created_at) {
+    const days = getDaysOnline(node.created_at)
+    tags.push(lang === 'zh-CN' ? `在线 ${days} 天` : `${days} days online`)
+  }
+
+  if (node.price > 0 && showPrice.value) {
     tags.push(formatPriceWithCycle(node.price, node.billing_cycle, node.currency, lang))
+  }
+  
   return tags
 })
 
