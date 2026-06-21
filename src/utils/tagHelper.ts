@@ -346,11 +346,20 @@ export function formatPriceWithCycle(
 const TRAILING_ZERO_REGEX = /\.?0+$/
 
 /**
- * 计算已在线天数（自创建时间 createdAt 起至今）
- * @param createdAt 创建时间（字符串或时间戳）
- * @returns 已在线天数，无效时间返回 0
+ * 计算已在线天数（由 uptime 秒数换算）
+ * @param uptime 在线时长（秒）
+ * @returns 已在线天数，向下取整
  */
-export function getDaysOnline(createdAt: string | number | undefined): number {
+export function getDaysOnline(uptime: number): number {
+  return Math.floor(uptime / 86400)
+}
+
+/**
+ * 计算自某个时间点起至今的天数
+ * @param createdAt 起始时间（字符串或时间戳）
+ * @returns 天数，无效时间返回 0
+ */
+export function getDaysFrom(createdAt: string | number | undefined): number {
   if (!createdAt)
     return 0
 
